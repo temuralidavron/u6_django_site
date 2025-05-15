@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a href="{% url 'create-book' %}">book create </a><br><br>
+
+<a href="{% url 'author-create' %}">author create </a><br><br>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th scope="col">author</th>
+      <th scope="col">update</th>
+      <th scope="col">delete</th>
+      <th scope="col">detail</th>
+    </tr>
+  </thead>
+{% for book in books %}
+    <tr>
+      <th scope="row">{{ book.id }}</th>
+      <td>{{ book.title }} </td>
+      <td>{{ book.description }}</td>
+      <td>{{ book.price }}</td>
+      {% if book.image %}
+      <td><img width=100px height=150px src="{{ book.image.url }}"></td>
+      {% else %}
+      <td>Rasm mavjud emas</td>
+      {% endif %}
+      {% if book.author %}
+      <td>{{ book.author.full_name }}</td>
+      {% else %}
+      <td>Xalq og'zaki ijodi </td>
+      {% endif %}
+      <td><a href="{% url 'update-book' book.pk %}">Update</a> </td>
+      <td><a href="{% url 'delete-book' book.pk %}">Delete</a> </td>
+      <td><a href="{% url 'detail-book' book.pk %}">Detail</a> </td>
+
+    </tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

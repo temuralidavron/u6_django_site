@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p>Siz rosan ham <strong>{{ book.title }}</strong>ni o'chirmoqchimisiz</p>
+<form method="post">
+   {% csrf_token %}
+    <button class="btn btn-primary">Send</button>
+
+
+</form>
+{% endblock %}

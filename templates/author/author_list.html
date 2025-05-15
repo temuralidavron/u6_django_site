@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th scope="col">update</th>
+      <th scope="col">delete</th>
+      <th scope="col">detail</th>
+    </tr>
+  </thead>
+<a href="{% url 'author-create' %}">create author</a>
+{% for author in authors %}
+    <tr>
+      <th scope="row">{{ author.id }}</th>
+      <td>{{ author.full_name }} </td>
+      <td>{{ author.birthday }}</td>
+      <td>{{ author.country }}</td>
+      <td><a style="btn-btn-primary" href="{% url 'author-update' author.pk %}">update</a> </td>
+
+
+    </tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

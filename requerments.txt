@@ -1,0 +1,10 @@
+appdata==2.2.1
+asgiref==3.8.1
+click==8.1.8
+colorama==0.4.6
+colored==2.3.0
+Django==5.2
+psycopg2-binary==2.9.10
+sqlparse==0.5.3
+to-requirements.txt==2.0.14
+tzdata==2025.2

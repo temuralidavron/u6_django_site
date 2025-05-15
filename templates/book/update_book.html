@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="post">
+   {% csrf_token %}
+  <label>Title</label>
+  <input type="text" name="title" id="title" value="{{ book.title }}"  required ><br><br>
+  <label>Description</label>
+  <input type="text" name="description" id="description" value="{{ book.description }}"><br><br>
+  <label>Price</label>
+  <input type="text" name="price" id="price" value="{{ book.price }}"><br><br>
+  <button class="btn btn-primary">Send</button>
+
+</form>
+{% endblock %}

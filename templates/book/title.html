@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a href="{% url 'create-book' %}">book create </a>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+
+    <tr>
+      <th scope="row">{{ book.id }}</th>
+      <td>{{ book.title}}</td>
+      <td>{{ book.description }}</td>
+      <td>{{ book.price }}</td>
+
+    </tr>
+
+
+
+</table>
+
+{% endblock %}
