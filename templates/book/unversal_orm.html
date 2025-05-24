@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Bugun ORM</h1>
+{% for b in kuyov %}
+<h1>ID {{ b.id }}</h1>
+<p>{{ b.title }}</p>
+<p>{{ b.price }}</p>
+<p>{{ b.description }}</p>
+<p>{{ b.author.full_name }}</p>
+<p>{{ b.author.country }}</p>
+
+<hr>
+{% endfor %}
+
+<h1>Bu filter uchun</h1>
+{% for f in filters %}
+<p>{{ f.title}}</p>
+{% endfor %}
+
+
+<h2>{{ obj_count }}</h2>
+JAMI PRICELAR
+<h2>{{ book_price }}</h2>
+{% for b in price_list_filter %}
+<p>{{ b.price }}</p>
+{% endfor %}
+</body>
+</html>

@@ -1,4 +1,4 @@
-
+from django.db.models.aggregates import Sum, Max, Avg
 from django.shortcuts import render, redirect
 
 from book.forms import AuthorForm, BookForm
@@ -159,7 +159,7 @@ def delete_book(request, pk):
     book = Book.objects.get(pk=pk)
     if request.method == 'POST':
         book.delete()
-        return redirect('list')
+        return redirect('book-list')
     context = {
         'book': book
 
@@ -174,3 +174,29 @@ def detail_book(request, pk):
         'book': book
     }
     return render(request, 'book/book_detail.html', context)
+
+
+
+
+
+def unversal_orm(request):
+    books = Book.objects.all()
+    book_filter=Book.objects.filter(price__gt=12)
+    obj_count=Book.objects.last()
+    book_price=book_filter.aggregate(Sum('price'))['price__sum']
+    java_list=list(range(1,100000))
+    price_list_filter=Book.objects.filter(price__in=java_list)
+
+    print(book_price)
+    context = {
+        'kuyov': books,
+        'filters': book_filter,
+        'obj_count': obj_count,
+        'book_price': book_price,
+        'price_list_filter': price_list_filter,
+    }
+    return render(request, 'book/unversal_orm.html', context)
+
+
+
+

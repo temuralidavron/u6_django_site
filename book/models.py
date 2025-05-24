@@ -13,6 +13,8 @@ class Author(models.Model):
         return self.full_name
 
 
+
+
 class Book(models.Model):
     author=models.ForeignKey(Author,on_delete=models.CASCADE,blank=True,null=True)
     title=models.CharField(max_length=150)
