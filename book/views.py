@@ -1,8 +1,13 @@
-from django.db.models.aggregates import Sum, Max, Avg
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.paginator import Paginator
+from django.db.models import When, Case, Value, Q
+from django.db.models.aggregates import Sum, Max, Avg, Count
+from django.db.models.fields import CharField
 from django.shortcuts import render, redirect
 
+from accounts.utils import check_user, admin_required
 from book.forms import AuthorForm, BookForm
-from book.models import Book, Author
+from book.models import Book, Author, Category, Product
 
 
 # def book_list(request):
@@ -94,7 +99,7 @@ def create_author(request):
         if form.is_valid():
             form.save()
             print(form)
-            return redirect('author-list')
+            return redirect('book:author-list')
 
     else:
         form=AuthorForm(request.POST)
@@ -108,7 +113,7 @@ def update_author(request,pk):
         form=AuthorForm(request.POST,instance=author)
         if form.is_valid():
             form.save()
-            return redirect('author-list')
+            return redirect('book:author-list')
 
 
     else:
@@ -118,34 +123,48 @@ def update_author(request,pk):
 # BOOK CRUD
 def book_list(request):
     books = Book.objects.all()
+    q=request.GET.get('q')
+    print(q)
+    if q:
+        books=Book.objects.filter(
+            Q (title__icontains=q) |
+            Q(description__icontains=q) |
+            Q(price__icontains=q)
+
+        )
+    paginator = Paginator(books, 2)
+    page = request.GET.get('page')
+    books = paginator.get_page(page)
+
     context = {
-        'books': books
+        'books': books,
     }
     return render(request, 'book/book_list.html', context)
 
-
-
+# @admin_required
+@check_user
+@permission_required('book.add_book', raise_exception=True)
 def create_book(request):
     if request.method=='POST':
         form=BookForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             # print(form)
-            return redirect('book-list')
+            return redirect('book:book-list')
 
     else:
         form=BookForm(request.POST)
 
     return render(request,'book/book_create.html',{'form':form})
 
-
+@check_user
 def update_book(request,pk):
     book=Book.objects.filter(pk=pk).first()
     if request.method=="POST":
         form=BookForm(request.POST,instance=book)
         if form.is_valid():
             form.save()
-            return redirect('book-list')
+            return redirect('book:book-list')
 
 
     else:
@@ -154,12 +173,12 @@ def update_book(request,pk):
 
 
 
-
+@login_required
 def delete_book(request, pk):
     book = Book.objects.get(pk=pk)
     if request.method == 'POST':
         book.delete()
-        return redirect('book-list')
+        return redirect('book:book-list')
     context = {
         'book': book
 
@@ -167,7 +186,7 @@ def delete_book(request, pk):
     return render(request, 'book/delete_book.html', context)
 
 
-
+@login_required
 def detail_book(request, pk):
     book = Book.objects.get(pk=pk)
     context = {
@@ -180,20 +199,33 @@ def detail_book(request, pk):
 
 
 def unversal_orm(request):
-    books = Book.objects.all()
-    book_filter=Book.objects.filter(price__gt=12)
-    obj_count=Book.objects.last()
-    book_price=book_filter.aggregate(Sum('price'))['price__sum']
-    java_list=list(range(1,100000))
-    price_list_filter=Book.objects.filter(price__in=java_list)
+    cat=Category.objects.annotate(pro=Count('products'))  # har bir obj uchun
+    dic=Category.objects.filter(products__price__gt=150000).distinct()
 
-    print(book_price)
+    kuyov=Product.objects.annotate(
+        price_label=Case(
+            When(price__lte=10000, then=Value('Arzon')),
+            When(price__lte=50000, then=Value('O‘rtacha')),
+            default=Value('Qimmat'),
+            output_field=CharField()
+        )
+    )
+    new=Category.objects.filter(products__is_active=True)
+    shoxa=Product.objects.only('name','price')
+    defer=Product.objects.defer('price')  # kechikish
+    old=Product.objects.values_list('name','price')
+
+
+
     context = {
-        'kuyov': books,
-        'filters': book_filter,
-        'obj_count': obj_count,
-        'book_price': book_price,
-        'price_list_filter': price_list_filter,
+        'cat': cat,
+        'dic': dic,
+        'kuyov': kuyov,
+        'new': new,
+        'shoxa': shoxa,
+        'defer': defer,
+        'old': old,
+
     }
     return render(request, 'book/unversal_orm.html', context)
 

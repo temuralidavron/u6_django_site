@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a href="{% url 'create-book' %}">book create </a>
+<a href="{% url 'book:create-book' %}">book create </a>
 
 <table class="table">
   <thead>
@@ -11,6 +11,8 @@
       <th scope="col">Title</th>
       <th scope="col">Description</th>
       <th scope="col">Price</th>
+      <th scope="col">Update</th>
+      <th scope="col">delete</th>
     </tr>
   </thead>
 
@@ -24,6 +26,8 @@
       {% else %}
       <td>yoq</td>
       {% endif %}
+            <td><a href="{% url 'book:update-book' book.pk %}">Update</a> </td>
+      <td><a href="{% url 'book:delete-book' book.pk %}">Delete</a> </td>
 
 
     </tr>

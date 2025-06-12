@@ -25,7 +25,7 @@
             Dropdown
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="{% url 'chat' %}">Chat</a></li>
             <li><a class="dropdown-item" href="#">Another action</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -35,8 +35,20 @@
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      {% if user.is_authenticated %}
+                  <h3>Welcame!!! {{ user.username}} </h3>
+
+      <ul>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+</ul>
+      {% else %}
+          <ul>
+                  <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                  <li><a class="dropdown-item" href="{% url 'login' %}">LOgin</a></li>
+</ul>
+{% endif %}
+      <form method="get" class="d-flex">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search" value="{{ qx }}" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
     </div>

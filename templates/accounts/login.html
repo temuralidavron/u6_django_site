@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" >
+   {% csrf_token %}
+      {{ form.as_p }}
+    <button class="btn btn-primary">Send</button>
+
+    {% if not request.user.is_authenticated %}
+                  <a class="dropdown-item" href="{% url 'register' %}">Register</a>
+
+    {% endif %}
+                  <a class="dropdown-item" href="{% url 'forget_password' %}">Forget password</a>
+
+
+</form>
+{% endblock %}
