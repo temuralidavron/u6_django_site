@@ -15,7 +15,7 @@
       <th scope="col">detail</th>
     </tr>
   </thead>
-<a href="{% url 'author-create' %}">create author</a>
+<a href="{% url 'book:author-create' %}">create author</a>
 {% for author in authors %}
     <tr>
       <th scope="row">{{ author.id }}</th>

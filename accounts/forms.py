@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 # from django.contrib.auth.models import User
 from django.template.defaultfilters import first
@@ -30,6 +31,7 @@ class RegisterForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=200)
     password=forms.CharField(max_length=100)
+    captcha=CaptchaField()
 
 
 

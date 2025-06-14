@@ -1,9 +1,13 @@
+import openpyxl
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.db.models import When, Case, Value, Q
 from django.db.models.aggregates import Sum, Max, Avg, Count
 from django.db.models.fields import CharField
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views import View
+from django.views.generic import ListView
 
 from accounts.utils import check_user, admin_required
 from book.forms import AuthorForm, BookForm
@@ -228,6 +232,55 @@ def unversal_orm(request):
 
     }
     return render(request, 'book/unversal_orm.html', context)
+
+
+
+# export xls
+
+def export_book_xls(request):
+    books = Book.objects.all()
+    workbook=openpyxl.Workbook()
+    sheet=workbook.active
+    sheet.title='Kitoblar'
+
+    sheet.append([
+        'id',
+        'title',
+        'description',
+        'price',
+        'image',
+        'file',
+        'is_published'
+    ])
+    for book in books:
+        sheet.append([
+            book.id,
+            book.title,
+            book.description,
+            book.price,
+            None,
+            None,
+            book.is_published
+        ])
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=kitob.xlsx'
+    workbook.save(response)
+    return response
+
+
+# class crud
+#
+# class BookListView(View):
+#
+#     def get(self,request):
+#         books=Book.objects.all()
+#         context = {
+#             'books': books,
+#             'shoxake':'virus'
+#         }
+#         return render(request,'book/book_list.html',context)
+
+
 
 
 

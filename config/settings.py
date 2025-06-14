@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     # global
     'django_extensions',
+    'captcha',
 ]
 
 MIDDLEWARE = [

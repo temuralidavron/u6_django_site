@@ -4,6 +4,7 @@
 {% if perms.book.add_book %}
 
 <a href="{% url 'book:create-book' %}">book create </a><br><br>
+<a href="{% url 'book:export-book-xls' %}">excel file </a><br><br>
 
 
 {% endif %}
@@ -53,6 +54,7 @@
 {% endfor %}
 
 </table>
+{{ shoxake }}
 
 {% include 'book/pagination.html' with books=books  %}
 
