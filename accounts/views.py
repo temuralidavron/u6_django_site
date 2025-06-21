@@ -4,10 +4,15 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from accounts.forms import RegisterForm, LoginForm, EmailChat, ForgetPasswordForm, DoneForm
+from accounts.forms import RegisterForm, LoginForm, EmailChat, ForgetPasswordForm, DoneForm, TransactionForm
 from accounts.models import CustomUser, Code
 from accounts.utils import  send_html_view
 from config import settings
+from django.shortcuts import render, redirect
+from django.db import transaction
+from django.http import HttpResponse
+from .forms import TransactionForm
+from .models import CustomUser
 
 
 # Create your views here.
@@ -110,3 +115,64 @@ def done_view(request):
 
     form=DoneForm()
     return render(request,"accounts/reset.html",{'form':form})
+
+
+# @transaction.atomic  # Dekorator orqali tranzaktsiyani avtomatik
+def transaction_post(request):
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            from_user = form.cleaned_data['from_user']
+            to_user = form.cleaned_data['to_user']
+            amount = form.cleaned_data['amount']
+            with transaction.atomic():
+                # Foydalanuvchilarni olib kelamiz
+                f_u = CustomUser.objects.select_for_update().filter(username=from_user).first()
+                t_u = CustomUser.objects.select_for_update().filter(username=to_user).first()
+
+                if not f_u or not t_u:
+                    return HttpResponse("Foydalanuvchi topilmadi")
+
+                if f_u.balance < amount:
+                    return HttpResponse("Hisobda mablag' yetarli emas")
+
+                try:
+
+                    f_u.balance -= amount
+                    t_u.balance += amount
+
+                    f_u.save()
+                    t_u.save()
+                    form.save()
+
+                    return redirect("book:book-list")
+
+                except Exception as e:
+                    return HttpResponse(f"Xatolik yuz berdi: {str(e)}")
+
+    # GET request
+    form = TransactionForm()
+    return render(request, "accounts/transaction.html", {'form': form})
+
+
+#
+# def transaction_post(request):
+#     if request.method=='POST':
+#         form=TransactionForm(request.POST)
+#         if form.is_valid():
+#             from_user=form.cleaned_data['from_user']
+#             to_user=form.cleaned_data['to_user']
+#             amount=form.cleaned_data['amount']
+#             f_u=CustomUser.objects.filter(username=from_user).first()
+#             t_u=CustomUser.objects.filter(username=to_user).first()
+#             if f_u.balance<amount:
+#                 return HttpResponse("parol xato yoki mudati otgan")
+#             f_u.balance-=amount
+#             t_u.balance+=amount
+#             t_u.save()
+#             f_u.save()
+#             form.save()
+#             return redirect("book:book-list")
+#
+#     form=TransactionForm()
+#     return render(request,"accounts/transaction.html",{'form':form})

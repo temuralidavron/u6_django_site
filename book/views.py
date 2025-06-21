@@ -5,7 +5,7 @@ from django.db.models import When, Case, Value, Q
 from django.db.models.aggregates import Sum, Max, Avg, Count
 from django.db.models.fields import CharField
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
 
@@ -281,7 +281,48 @@ def export_book_xls(request):
 #         return render(request,'book/book_list.html',context)
 
 
+# book full
 
+
+class BookView(View):
+    def get(self, request, action=None, pk=None):
+        if action == "create":
+            form = BookForm()
+            return render(request, 'product_form.html', {'form': form})
+
+        elif action == "update" and pk:
+            product = get_object_or_404(Book, pk=pk)
+            form = BookForm(instance=product)
+            return render(request, 'product_form.html', {'form': form})
+
+        elif action == "delete" and pk:
+            product = get_object_or_404(Book, pk=pk)
+            product.delete()
+            return redirect('product-list')
+
+        elif action == "detail" and pk:
+            product = get_object_or_404(Book, pk=pk)
+            return render(request, 'product_detail.html', {'product': product})
+
+        else:  # Read (List all)
+            products = Book.objects.all()
+            return render(request, 'product_list.html', {'products': products})
+
+    def post(self, request, action=None, pk=None):
+        if action == "create":
+            form = BookForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('product-list')
+            return render(request, 'product_form.html', {'form': form})
+
+        elif action == "update" and pk:
+            product = get_object_or_404(Book, pk=pk)
+            form = BookForm(request.POST, instance=product)
+            if form.is_valid():
+                form.save()
+                return redirect('product-list')
+            return render(request, 'product_form.html', {'form': form})
 
 
 

@@ -71,21 +71,21 @@ from book.models import Book
 
 
 class BookListView(ListView):
-    print('baxtli bolalik shoxa ')
+    # print('baxtli bolalik shoxa ')
     model = Book
     context_object_name = 'books'
     template_name = 'book/book_list.html'
 
 
 class BookCreateView(CreateView):
-    print("shoxaning ko'z yoshlari")
+    # print("shoxaning ko'z yoshlari")
     form_class = BookForm
     template_name = 'book/book_create.html'
     success_url = reverse_lazy('book:book-list')
 
 
 class BookDetailView(DetailView):
-    print("shoxa qizlarni ajali")
+    # print("shoxa qizlarni ajali")
     model = Book
     context_object_name = 'book'
     template_name = 'book/book_detail.html'
@@ -93,7 +93,7 @@ class BookDetailView(DetailView):
 
 
 class BookUpdateView(UpdateView):
-    print("shoxa yaxshiyam bola ")
+    # print("shoxa yaxshiyam bola ")
     model = Book
     form_class = BookForm
     template_name = 'book/book_create.html'
@@ -101,7 +101,7 @@ class BookUpdateView(UpdateView):
     pk_url_kwarg = 'pk'
 
 class BookDeleteView(DeleteView):
-    print('shoxa delete')
+    # print('shoxa delete')
     model = Book
     context_object_name = 'book'
     template_name = 'book/delete_book.html'

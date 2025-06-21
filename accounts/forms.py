@@ -3,7 +3,7 @@ from django import forms
 # from django.contrib.auth.models import User
 from django.template.defaultfilters import first
 
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Transaction
 
 
 class RegisterForm(forms.ModelForm):
@@ -49,6 +49,17 @@ class DoneForm(forms.Form):
     code=forms.CharField(max_length=100)
     password=forms.CharField(max_length=100)
     re_password=forms.CharField(max_length=100)
+
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = [
+            'from_user',
+            'to_user',
+            'amount',
+        ]
 
 
 

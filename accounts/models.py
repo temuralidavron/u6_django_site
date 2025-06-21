@@ -21,6 +21,14 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15)
     role = models.CharField(default=RoleChoice.READER, choices=RoleChoice, max_length=15)
     email = models.EmailField(max_length=254)
+    balance = models.FloatField(default=200000)
+
+class Transaction(models.Model):
+    from_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name='from_user')
+    to_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name='to_user')
+    amount = models.FloatField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 def check_date():
