@@ -23,6 +23,15 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=254)
     balance = models.FloatField(default=200000)
 
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,related_name='profile')
+    avatar = models.ImageField(default='sh.jpg', upload_to='profile_pics')
+    bio=models.TextField(max_length=500)
+
+
+
 class Transaction(models.Model):
     from_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name='from_user')
     to_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name='to_user')

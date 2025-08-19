@@ -63,6 +63,15 @@ class TransactionForm(forms.ModelForm):
 
 
 
+class SetPasswordForm(forms.Form):
+    password=forms.CharField(max_length=100)
+    re_password=forms.CharField(max_length=100)
+
+    def clean_password(self):
+        if self.cleaned_data['password'] != self.cleaned_data['password']:
+            raise forms.ValidationError('Passwords don\'t match')
+        return self.cleaned_data['password']
+
 
 
 

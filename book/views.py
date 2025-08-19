@@ -12,6 +12,7 @@ from django.views.generic import ListView
 from accounts.utils import check_user, admin_required
 from book.forms import AuthorForm, BookForm
 from book.models import Book, Author, Category, Product
+from config import settings
 
 
 # def book_list(request):
@@ -323,6 +324,8 @@ class BookView(View):
                 form.save()
                 return redirect('product-list')
             return render(request, 'product_form.html', {'form': form})
+
+
 
 
 

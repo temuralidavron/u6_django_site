@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i_6+8)pp^xsj!gl%&)-p967r#o^^c+dg8=*l9*4x(&tzc4jc22'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,15 +43,16 @@ INSTALLED_APPS = [
     'book',
     'accounts',
     # global
-    'django_extensions',
+    # 'django_extensions',
     'captcha',
+    'rosetta',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # 'accounts.middleware.LogIPMiddleware',
-    'accounts.middleware.RequestCount',
-
+    # 'accounts.middleware.RequestCount',
+    'django.middleware.locale.LocaleMiddleware',  # Tilni
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,14 +93,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "shox_oshiq",
-        "USER": "postgres",
-        "PASSWORD": "1995",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -120,13 +122,39 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en-us'  # Asosiy til (o'zgartirish mumkin)
 
-USE_I18N = True
+USE_I18N = True  # Internationalization yoqilgan
+
+USE_L10N = True  # Mahalliylashtirish yoqilgan
 
 USE_TZ = True
+
+
+
+LANGUAGES = [
+
+    ('en', 'English'),
+
+    ('uz', 'Uzbek'),
+
+    ('ru', 'Russian'),
+
+]
+
+
+# Tarjima fayllarini qayerda saqlashni ko'rsatish
+
+LOCALE_PATHS = [
+
+    BASE_DIR / 'locale',
+
+]
+
+
+
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -144,16 +172,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # email
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
-EMAIL_HOST = "smtp.gmail.com"
-
-EMAIL_PORT = 587
-
-EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = "aliyertemur95@gmail.com"
-
-EMAIL_HOST_PASSWORD = "kehg xnwq maue onkn"
-
+# oauth2
+GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = config("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = config("GOOGLE_REDIRECT_URI")
+GOOGLE_AUTH_URL = config("GOOGLE_AUTH_URL")
+GOOGLE_USER_INFO_URL = config("GOOGLE_USER_INFO_URL")
+GOOGLE_TOKEN_URL = config("GOOGLE_TOKEN_URL")
 

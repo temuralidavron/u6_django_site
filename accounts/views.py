@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from accounts.forms import RegisterForm, LoginForm, EmailChat, ForgetPasswordForm, DoneForm, TransactionForm
-from accounts.models import CustomUser, Code
+from accounts.forms import RegisterForm, LoginForm, EmailChat, ForgetPasswordForm, DoneForm, TransactionForm, \
+    SetPasswordForm
+from accounts.models import CustomUser, Code, Profile
 from accounts.utils import  send_html_view
 from config import settings
 from django.shortcuts import render, redirect
@@ -27,6 +28,7 @@ def register(request):
             print(user,user.password)
             user.set_password(password)
             form.save()
+            Profile.objects.create(user=user)
             return redirect("login")
     else:
         form=RegisterForm()
@@ -176,3 +178,106 @@ def transaction_post(request):
 #
 #     form=TransactionForm()
 #     return render(request,"accounts/transaction.html",{'form':form})
+
+
+
+# google login
+
+def google_login(request):
+    auth_url = (
+        f"{settings.GOOGLE_AUTH_URL}"
+        f"?client_id={settings.GOOGLE_CLIENT_ID}"
+        f"&redirect_uri={settings.GOOGLE_REDIRECT_URI}"
+        f"&response_type=code"
+        f"&scope=openid email profile"
+        f"&access_type=offline"
+        f"&prompt=consent"
+    )
+    print('shoxa aka')
+    return redirect(auth_url)
+
+
+
+
+import requests  # <-- requests kutubxonasi kerak
+
+from django.conf import settings
+from django.http import HttpResponse
+
+
+def google_callback(request):
+    code = request.GET.get('code')
+    if not code:
+        return HttpResponse("Kod yo‘q", status=400)
+
+    token_data = {
+        "code": code,
+        "client_id": settings.GOOGLE_CLIENT_ID,
+        "client_secret": settings.GOOGLE_CLIENT_SECRET,
+        "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+        "grant_type": "authorization_code",
+    }
+
+    # Token olish
+    print('post')
+    token_response = requests.post(settings.GOOGLE_TOKEN_URL, data=token_data)  # requests.post ishlatiladi
+    print('after post')
+    token_json = token_response.json()
+    access_token = token_json.get("access_token")
+
+    if not access_token:
+        return HttpResponse("Access token olinmadi", status=400)
+
+    # Foydalanuvchi ma’lumotlarini olish
+    user_info_response = requests.get(  # requests.get ishlatiladi
+        settings.GOOGLE_USER_INFO_URL,
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    user_info = user_info_response.json()
+    print(user_info['email'],user_info.get('email'))
+    user=CustomUser.objects.filter(username=user_info["email"]).first()
+    if user:
+        return redirect('book:book-list')
+    else:
+        CustomUser.objects.create(
+            username=user_info["email"],
+            email=user_info["email"],
+            first_name=user_info["name"],
+        )
+
+
+
+
+    return redirect("book:book-list")
+
+
+
+def profile_view(request):
+    print(request.user)
+    user=Profile.objects.filter(user__username=request.user).first()
+    context={
+        'user':user,
+    }
+    print(user)
+    return render(request,"accounts/profile.html",context)
+
+
+
+def set_password_view(request):
+    user=request.user
+    if request.method == 'POST':
+        form=SetPasswordForm(request.POST)
+
+        if form.is_valid():
+            password=form.cleaned_data['password']
+
+            user=CustomUser.objects.filter(username=user).first()
+            if user:
+                user.set_password(password)
+                user.save()
+                return redirect("profile")
+
+    else:
+        form=SetPasswordForm()
+    return render(request,"accounts/setpassword.html",{'form':form})

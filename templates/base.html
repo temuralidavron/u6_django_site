@@ -18,8 +18,23 @@
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
+<form action="{% url 'set_language' %}" method="post">
+
+    {% csrf_token %}
+
+    <select name="language">
+
+        <option value="en">English</option>
+
+        <option value="uz">O‘zbekcha</option>
+
+        <option value="ru">Русский</option>
+
+    </select>
+
+    <button type="submit">O‘zgartirish</button>
+
+</form>        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown
@@ -39,12 +54,15 @@
                   <h3>Welcame!!! {{ user.username}} </h3>
 
       <ul>
+
                   <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
 </ul>
       {% else %}
           <ul>
                   <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
-                  <li><a class="dropdown-item" href="{% url 'login' %}">LOgin</a></li>
+                  <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                  <li><a class="dropdown-item" href="{% url 'google_login' %}">Google</a></li>
 </ul>
 {% endif %}
       <form method="get" class="d-flex">

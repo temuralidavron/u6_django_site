@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext as _
 
 
 class DeleteModel(models.Manager):
@@ -24,9 +25,9 @@ class BaseModel(models.Model):
 
 
 class Author(BaseModel):
-    full_name = models.CharField(max_length=100)
-    birthday = models.IntegerField()
-    country = models.CharField(max_length=100)
+    full_name = models.CharField(_('full_name'),max_length=100)
+    birthday = models.IntegerField(_('birthday'), blank=True, null=True)
+    country = models.CharField(_('country'),max_length=100)
     isbn = models.CharField(max_length=13, blank=True, null=True)
     email = models.CharField(blank=True, null=True)
 
@@ -36,8 +37,8 @@ class Author(BaseModel):
 
 class Book(BaseModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
-    title = models.CharField(max_length=150)
-    description = models.TextField()
+    title = models.CharField(_('title'),max_length=150)
+    description = models.TextField(_('description'))
     price = models.IntegerField()
     image = models.ImageField(upload_to='book', blank=True, null=True)
     file = models.FileField(upload_to='file', blank=True, null=True)

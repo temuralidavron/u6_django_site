@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome you profile </h1>
+<h3>{{ user.user.username }}</h3>
+
+ {% if user.avatar %}
+      <td><img width=100px height=150px src="{{ user.avatar.url }}"></td>
+
+      {% endif %}
+<p>Bio: {{ user.bio }}</p>
+<p>Email: {{ user.email }}</p>
+
+
+
+
+                  <a class="dropdown-item" href="{% url 'set_password' %}">Set password</a>
+
+{% endblock %}
